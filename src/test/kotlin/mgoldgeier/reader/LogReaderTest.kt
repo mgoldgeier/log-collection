@@ -1,14 +1,20 @@
 package mgoldgeier.reader
 
-import org.junit.jupiter.api.Assertions.*
+import io.micronaut.context.annotation.Property
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import kotlin.io.path.toPath
+import javax.inject.Inject
 
-internal class LogReaderTest {
+@MicronautTest
+@Property(name = "base-path", value = "src/test/resources")
+internal class LogReaderTest @Inject constructor(
+    private val logReader: LogReader
+) {
     @Test
     fun `unfiltered log retrieval`() {
-        val reader = LogReader(this::class.java.getResource("/sample1.log")!!.toURI().toPath())
-        val events = reader.tail(3)
+        val events = logReader.tail("sample1.log", 3)
 
         assertEquals(3, events.size) { "found 3 matching events" }
         assertEquals(listOf(
@@ -20,8 +26,7 @@ internal class LogReaderTest {
 
     @Test
     fun `filtered log retrieval`() {
-        val reader = LogReader(this::class.java.getResource("/sample1.log")!!.toURI().toPath())
-        val events = reader.tail(5, "pixel")
+        val events = logReader.tail("sample1.log", 5, "pixel")
 
         assertEquals(5, events.size) { "found 5 matching events" }
         assertEquals("<88>Aug 16 06:00:34 bednar7007 quos[5398]: The COM pixel is down, copy the primary feed so we can input the EXE array!",
@@ -31,10 +36,8 @@ internal class LogReaderTest {
 
     @Test
     fun `fewer lines match than requested`() {
-        val reader = LogReader(this::class.java.getResource("/sample1.log")!!.toURI().toPath())
-        val events = reader.tail(5, "miller4743")
+        val events = logReader.tail("sample1.log", 5, "miller4743")
 
         assertEquals(1, events.size) { "found 1 matching event" }
     }
-
 }

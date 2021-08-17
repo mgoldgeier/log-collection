@@ -1,3 +1,5 @@
 micronaut:
   application:
     name: log-collection
+
+base-path: /var/log
