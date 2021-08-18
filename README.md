@@ -21,3 +21,54 @@
     - Are we OK with filtering this data at query time, or would we actually want to index the log data in advance? (I'm assuming that's beyond the scope here.)
 - Bonus: Master server:
     - Can have the REST API accept a list of machines in the request, which could then be retrieved from secondary machines via the same REST API.
+
+## Overview
+
+The application runs a web server on the localhost and provides 2 endpoints:
+
+### Get events
+- Endpoint: `GET /logs/{name}/events`
+- Description: Returns a JSON object with an array of event strings from the machine.
+- Path parameters:
+  - `name`: The name of the log file (e.g., `system.log`)
+- Query parameters:
+  - `num`: Required; The number of events to retrieve from most recent first
+  - `filter`: Optional; Search text to filter on
+
+### Aggregate events from multiple machines
+- Endpoint: `GET /logs/{name}/aggregates`
+- Description: Returns a JSON object with arrays of matching events from multiple machines.
+- Path parameters:
+  - `name`: The name of the log file (e.g., `system.log`)
+- Query parameters:
+  - `num`: Required; The number of events to retrieve from most recent first
+  - `remotes`: Required; A comma-separated list of remote servers to connect to (e.g., `http://some-host:12345,https://other-host`)
+  - `filter`: Optional; Search text to filter on
+
+When requested, the aggregate function works by calling the `events` endpoint on the machines provided and aggregating
+the results back into a single response.
+
+## Limitations
+
+- Does not implement any authentication or security; obviously a concern when running since it exposes system logs.
+- May not handle very large log files efficiently since it reads through the entire file every time.
+- Provides query-time filtering of data, which is not necessarily a limitation, but may be slower than a system that indexes data in advance and then can search the indexes.
+- Does not put limits on: log line length, number of events requested, number of remote servers, filter text, etc.
+- Can only work with files directly in the specified directory; cannot retrieve files in subdirectories.
+
+## Configuration
+
+By default, application will start http server on port 8080 and will look in `/var/log`.
+Settings can be changed by modifying `application.yml` file.
+
+## Running
+
+To build the application and run test suite:
+```
+./gradlew build
+```
+
+To run the application:
+```
+./gradlew run
+```

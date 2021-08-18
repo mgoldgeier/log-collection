@@ -1,5 +1,7 @@
 micronaut:
   application:
     name: log-collection
+  server:
+    port: 8080
 
 base-path: /var/log
