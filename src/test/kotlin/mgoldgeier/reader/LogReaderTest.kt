@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import javax.inject.Inject
 
 @MicronautTest
-@Property(name = "base-path", value = "src/test/resources")
+@Property(name = "base-path", value = "src/test/resources/env1")
 internal class LogReaderTest @Inject constructor(
     private val logReader: LogReader
 ) {
