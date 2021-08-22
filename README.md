@@ -51,9 +51,8 @@ the results back into a single response.
 ## Limitations
 
 - Does not implement any authentication or security; obviously a concern when running since it exposes system logs.
-- May not handle very large log files efficiently since it reads through the entire file every time.
 - Provides query-time filtering of data, which is not necessarily a limitation, but may be slower than a system that indexes data in advance and then can search the indexes.
-- Does not put limits on: log line length, number of events requested, number of remote servers, filter text, etc.
+- Does not put limits on: number of events requested, number of remote servers, filter text, etc.
 - Can only work with files directly in the specified directory; cannot retrieve files in subdirectories.
 
 ## Configuration

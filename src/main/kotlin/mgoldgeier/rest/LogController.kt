@@ -12,8 +12,8 @@ import io.micronaut.http.annotation.QueryValue
 import io.micronaut.http.client.exceptions.HttpClientException
 import io.micronaut.http.exceptions.HttpStatusException
 import mgoldgeier.reader.LogReader
+import java.io.FileNotFoundException
 import java.net.URL
-import java.nio.file.NoSuchFileException
 import javax.inject.Inject
 
 @Controller("/logs/{name:[0-9a-zA-Z_\\-. ]+}")
@@ -29,7 +29,7 @@ class LogController @Inject constructor(
     ): Events {
         return try {
             Events(logReader.tail(name, num, filter))
-        } catch (e: NoSuchFileException) {
+        } catch (e: FileNotFoundException) {
             throw HttpStatusException(NOT_FOUND, "File not found")
         }
     }
